@@ -149,3 +149,53 @@ const List = ({ todo }) => {
 ```
 
 `text`값 자체를 넘겨서 해결하였다! 단순히 추가를 구현하는 데에만 오류도 최소2~3개 씩 발생하였다..ㅠ
+
+### 3. 고유한 키값
+
+```js
+const List = (props) => {
+  return (
+    <ul className="todolist">
+      {props.todo.map((todoItem) => (
+        <TodoItem
+          text={todoItem.content}
+          id={todoItem.id}
+          isSelected={todoItem.isSelected}
+          deleteTodo={props.deleteTodo}
+        />
+      ))}
+    </ul>
+  );
+};
+
+const TodoItem = (props) => {
+  return (
+    <li className="todo__item" key={props.id}>
+      <div className="checkbox"></div>
+      <div className="todotext">{props.text}</div>
+      <button className="editBtn">Edit</button>
+      <button className="delBtn" onClick={() => props.deleteTodo(props.id)}>
+        X
+      </button>
+    </li>
+  );
+};
+```
+
+삭제 구현을 구현 하던 중 `map`을 통하여 `list`들을 구성하는데 `li`태그 안에서 `key`값을 설정하였더니 여전히 고유하지 않은 키값이라고 Warning이 떴었다.
+
+```js
+<ul className="todolist">
+  {props.todo.map((todoItem) => (
+    <TodoItem
+      key={todoItem.id}
+      text={todoItem.content}
+      id={todoItem.id}
+      isSelected={todoItem.isSelected}
+      deleteTodo={props.deleteTodo}
+    />
+  ))}
+</ul>
+```
+
+그래서 `ul`태그에서 `map`을 돌릴때 애초에 `key`값을 고유한 `id`값으로 넣어주니 해결할 수 있었다. 이유는 모르겠지만 안에서 하나씩 지정하는건 안되고 만들때 `key`값을 지정해줘야 하는 것 같다.
