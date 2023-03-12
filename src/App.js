@@ -41,11 +41,12 @@ const List = (props) => {
     <ul className="todolist">
       {props.todo.map((todoItem) => (
         <TodoItem
+          todoItem={todoItem}
           key={todoItem.id}
           text={todoItem.content}
           id={todoItem.id}
-          isSelected={todoItem.isSelected}
           deleteTodo={props.deleteTodo}
+          selectTodo={props.selectTodo}
         />
       ))}
     </ul>
@@ -68,7 +69,9 @@ const TodoItem = (props) => {
 const Button = (props) => {
   return (
     <section className="all">
-      <button className="btn__all btn__all__delete">{props.delete}</button>
+      <button className="btn__all btn__all__delete" onClick={props.AllDelete}>
+        {props.delete}
+      </button>
       <button className="btn__all btn__all__select">{props.select}</button>
     </section>
   );
@@ -76,17 +79,19 @@ const Button = (props) => {
 
 const App = () => {
   // todo 배열
-  const [todo, setTodo] = React.useState(() => {
-    return jsonLocalStorage.getItem("todolist") || [];
-  });
-  const [id, setId] = React.useState(() => {
-    return jsonLocalStorage.getItem("todolist")
-      ? jsonLocalStorage.getItem("todolist").length
-      : 0;
-  });
+  const [todo, setTodo] = React.useState(
+    jsonLocalStorage.getItem("todolist") || []
+  );
+  const [id, setId] = React.useState(
+    jsonLocalStorage.getItem("todolist")
+      ? jsonLocalStorage.getItem("todolist")[
+          jsonLocalStorage.getItem("todolist").length - 1
+        ].id
+      : 0
+  );
+
   function updateTodo(text) {
     const nextId = id + 1;
-
     const newTodo = {
       id: nextId,
       content: text,
@@ -94,7 +99,6 @@ const App = () => {
     };
 
     const currentTodo = [...todo, newTodo];
-
     setTodo(currentTodo);
     setId(nextId);
     jsonLocalStorage.setItem("todolist", currentTodo);
@@ -111,12 +115,18 @@ const App = () => {
     jsonLocalStorage.setItem("todolist", currentTodo);
   }
 
+  // 전체 삭제
+  function AllDelete() {
+    setTodo([]);
+    localStorage.clear();
+  }
+
   return (
     <div className="wrapper">
       <Title text="To Do List"></Title>
       <Input updateTodo={updateTodo} />
       <List todo={todo} deleteTodo={deleteTodo}></List>
-      <Button delete="전체 삭제" select="전체 선택" />
+      <Button delete="전체 삭제" select="전체 선택" AllDelete={AllDelete} />
     </div>
   );
 };
