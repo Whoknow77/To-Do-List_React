@@ -56,7 +56,10 @@ const List = (props) => {
 const TodoItem = (props) => {
   return (
     <li className="todo__item">
-      <div className="checkbox"></div>
+      <div
+        className="checkbox"
+        onClick={() => props.selectTodo(props.id)}
+      ></div>
       <div className="todotext">{props.text}</div>
       <button className="editBtn">Edit</button>
       <button className="delBtn" onClick={() => props.deleteTodo(props.id)}>
@@ -121,11 +124,15 @@ const App = () => {
     localStorage.clear();
   }
 
+  function selectTodo(id) {
+    console.log(id);
+  }
+
   return (
     <div className="wrapper">
       <Title text="To Do List"></Title>
       <Input updateTodo={updateTodo} />
-      <List todo={todo} deleteTodo={deleteTodo}></List>
+      <List todo={todo} deleteTodo={deleteTodo} selectTodo={selectTodo}></List>
       <Button delete="전체 삭제" select="전체 선택" AllDelete={AllDelete} />
     </div>
   );
